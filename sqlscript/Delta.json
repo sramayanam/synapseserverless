@@ -2,7 +2,7 @@
 	"name": "Delta",
 	"properties": {
 		"content": {
-			"query": "",
+			"query": "CREATE EXTERNAL FILE FORMAT DeltaLakeFormat\nWITH (  \n    FORMAT_TYPE = DELTA\n);\nGO",
 			"metadata": {
 				"language": "sql"
 			},

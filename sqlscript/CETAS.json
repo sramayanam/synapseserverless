@@ -2,7 +2,7 @@
 	"name": "CETAS",
 	"properties": {
 		"content": {
-			"query": "USE DataExplorationDB;\nGO\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\n\nCREATE DATABASE SCOPED CREDENTIAL [WorkspaceIdentity] WITH IDENTITY = 'Managed Identity';\nGO\n\nCREATE EXTERNAL FILE FORMAT DeltaLakeFormat\nWITH (  \n    FORMAT_TYPE = DELTA\n);\nGO\n\nCREATE EXTERNAL FILE FORMAT parquet_file_format\nWITH\n(  \n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n);\nGO\n\n\nCREATE EXTERNAL TABLE [dbo].taxideltatable WITH (\n        LOCATION = '/data/curatedparquet1/',\n        DATA_SOURCE = ContosoLake,\n        FILE_FORMAT = parquet_file_format\n) AS\nSELECT * FROM dbo.GreenTaxiCleansed;\nGO",
+			"query": "USE DataExplorationDB;\nGO\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\n\nCREATE DATABASE SCOPED CREDENTIAL [WorkspaceIdentity] WITH IDENTITY = 'Managed Identity';\nGO\n\nCREATE EXTERNAL FILE FORMAT parquet_file_format\nWITH\n(  \n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n);\nGO\n\n\nCREATE EXTERNAL TABLE [dbo].taxideltatable WITH (\n        LOCATION = '/data/curatedparquet1/',\n        DATA_SOURCE = ContosoLake,\n        FILE_FORMAT = parquet_file_format\n) AS\nSELECT * FROM dbo.GreenTaxiCleansed;\nGO",
 			"metadata": {
 				"language": "sql"
 			},
