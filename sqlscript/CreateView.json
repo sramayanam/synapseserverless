@@ -1,0 +1,17 @@
+{
+	"name": "CreateView",
+	"properties": {
+		"content": {
+			"query": "DROP VIEW IF EXISTS GreenTaxiCleansed;\nGO\nCREATE VIEW GreenTaxiCleansed AS\nSELECT \nTOP 1000\nCASE WHEN t.VendorID = 2 THEN 'VeriFone Inc.' ELSE 'Creative Mobile Technologies' END as VendorName,\nYEAR(t.lpep_pickup_datetime) yr,\nMONTH(t.lpep_pickup_datetime) mo,\nDAY(t.lpep_pickup_datetime) pdy,\nDATEPART(HOUR,t.lpep_pickup_datetime) phr,\nDAY(t.lpep_dropoff_datetime) ddy,\nDATEPART(HOUR,t.lpep_dropoff_datetime) dhr,\nCASE \nWHEN t.RatecodeID = 1 THEN 'Standard rate' \nWHEN t.RatecodeID = 2 THEN 'JFK' \nWHEN t.RatecodeID = 3 THEN 'Newark' \nWHEN t.RatecodeID = 4 THEN 'Nassau or WestChester' \nWHEN t.RatecodeID = 5 THEN 'Negotiatied Fare' \nELSE 'Group Ride' END as RateCode,\nCASE \nWHEN t.payment_type = 1 THEN 'Credit Card' \nWHEN t.payment_type = 2 THEN 'Cash' \nWHEN t.payment_type = 3 THEN 'No charge' \nWHEN t.payment_type = 4 THEN 'Dispute' \nWHEN t.payment_type = 5 THEN 'Unkown' \nELSE 'Voided Trip' END as PaymentType,\nCASE WHEN t.trip_type=1 THEN 'Street-hail' ELSE 'Dispatch' END as TripType ,\nl.Borough as pickupborough, \nl.Zone as pickupzone, \nl.service_zone as pickupservicezone, \nl1.Borough as dropoffborough, \nl1.Zone dropoffzone, \nl1.service_zone dropoffservicezone,\nt.passenger_count,\nt.trip_distance ,\nt.fare_amount\t,\nt.extra ,\nt.mta_tax\t,\nt.tip_amount ,\nt.total_amount\nFROM\n    dbo.taxidata t\n    LEFT JOIN\n    dbo.location l\n    on t.PULocationID = l.LocationID\n    LEFT JOIN\n    dbo.location l1\n    on t.DOLocationID = l1.LocationID;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DataExplorationDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
