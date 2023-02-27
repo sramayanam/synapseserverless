@@ -22,6 +22,15 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/mysparkpool')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/srramsynws-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -94,72 +103,32 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/CreateView')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "DROP VIEW IF EXISTS GreenTaxiCleansed;\nGO\nCREATE VIEW GreenTaxiCleansed AS\nSELECT \nTOP 10000\nCASE WHEN t.VendorID = 2 THEN 'VeriFone Inc.' ELSE 'Creative Mobile Technologies' END as VendorName,\nYEAR(t.lpep_pickup_datetime) yr,\nMONTH(t.lpep_pickup_datetime) mo,\nDAY(t.lpep_pickup_datetime) pdy,\nDATEPART(HOUR,t.lpep_pickup_datetime) phr,\nDAY(t.lpep_dropoff_datetime) ddy,\nDATEPART(HOUR,t.lpep_dropoff_datetime) dhr,\nCASE \nWHEN t.RatecodeID = 1 THEN 'Standard rate' \nWHEN t.RatecodeID = 2 THEN 'JFK' \nWHEN t.RatecodeID = 3 THEN 'Newark' \nWHEN t.RatecodeID = 4 THEN 'Nassau or WestChester' \nWHEN t.RatecodeID = 5 THEN 'Negotiatied Fare' \nELSE 'Group Ride' END as RateCode,\nCASE \nWHEN t.payment_type = 1 THEN 'Credit Card' \nWHEN t.payment_type = 2 THEN 'Cash' \nWHEN t.payment_type = 3 THEN 'No charge' \nWHEN t.payment_type = 4 THEN 'Dispute' \nWHEN t.payment_type = 5 THEN 'Unkown' \nELSE 'Voided Trip' END as PaymentType,\nCASE WHEN t.trip_type=1 THEN 'Street-hail' ELSE 'Dispatch' END as TripType ,\nl.Borough as pickupborough, \nl.Zone as pickupzone, \nl.service_zone as pickupservicezone, \nl1.Borough as dropoffborough, \nl1.Zone dropoffzone, \nl1.service_zone dropoffservicezone,\nt.passenger_count,\nt.trip_distance ,\nt.fare_amount\t,\nt.extra ,\nt.mta_tax\t,\nt.tip_amount ,\nt.total_amount\nFROM\n    dbo.taxidata t\n    LEFT JOIN\n    dbo.location l\n    on t.PULocationID = l.LocationID\n    LEFT JOIN\n    dbo.location l1\n    on t.DOLocationID = l1.LocationID;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "DataExplorationDB",
-						"poolName": "Built-in"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/QueryingParquet')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "CREATE DATABASE DataExplorationDB \n                COLLATE Latin1_General_100_BIN2_UTF8;\n\n\nUSE DataExplorationDB;\n\nCREATE EXTERNAL DATA SOURCE ContosoLake\nWITH ( LOCATION = 'https://srramsynstorage.dfs.core.windows.net');\n\nCREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\n\n\nCREATE USER data_explorer FOR LOGIN data_explorer;\nGO\nGRANT ADMINISTER DATABASE BULK OPERATIONS TO data_explorer;\nGO\n\n\nCREATE EXTERNAL FILE FORMAT ParquetFormat\n    WITH (\n        FORMAT_TYPE = PARQUET\n    );\nGO\n\nSELECT\n    TOP 100 *,result.filepath(1)\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT='PARQUET'\n    ) AS [result];\n\nDROP EXTERNAL TABLE dbo.taxidata;\nCREATE EXTERNAL TABLE dbo.taxidata\n(\nVendorID INT,\nlpep_pickup_datetime DATETIME2,\nlpep_dropoff_datetime DATETIME2,\nstore_and_fwd_flag\tVARCHAR(2),\nRatecodeID\tfloat,\nPULocationID INT,\nDOLocationID INT,\npassenger_count\tfloat,\ntrip_distance float,\nfare_amount\tfloat,\nextra float,\nmta_tax\tfloat,\ntip_amount float,\ntolls_amount float,\nehail_fee VARCHAR(10),\nimprovement_surcharge float,\ntotal_amount float,\npayment_type float,\t\ntrip_type float,\ncongestion_surcharge float\n)\nWITH\n(\n    LOCATION='data/parquetfiles/green_tripdata_*.parquet',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=ParquetFormat\n);\nGO\n\nSELECT TOP 100 * FROM dbo.taxidata;\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'data/parquetfiles/green_tripdata_2022-08.parquet',\n        DATA_SOURCE='ContosoLake',\n        FORMAT='PARQUET'\n    ) AS [result];\n\n\n\n-- query the table\n\n\nSELECT TOP 100 *\nFROM OPENROWSET(\n    BULK 'https://srramsynstorage.dfs.core.windows.net/data/parquetfiles/*.*',\n    FORMAT = 'parquet') AS rows\n\n\nDROP EXTERNAL TABLE dbo.taxidata1;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "DataExplorationDB",
-						"poolName": "Built-in"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/ReadMasterData')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "SELECT\nTOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/data/csvfiles/taxi_zone_lookup.csv',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT='csv',\n            PARSER_VERSION = '2.0'\n    ) AS [location];\n\nDROP EXTERNAL FILE FORMAT CsvFormat;\nCREATE EXTERNAL FILE FORMAT CsvFormat\n    WITH (\n        FORMAT_TYPE = DELIMITEDTEXT,\n        FORMAT_OPTIONS(\n            FIELD_TERMINATOR = ',',\n            STRING_DELIMITER = '\"',\n            FIRST_ROW = 2\n        )\n    );\nGO\n\nDROP EXTERNAL TABLE dbo.location;\nCREATE EXTERNAL TABLE dbo.location\n(\n         LocationID INT,\n         Borough VARCHAR(50),\n         Zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8,\n         service_zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8\n)\nWITH\n(\n    LOCATION='/data/csvfiles/taxi_zone_lookup.csv',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=CsvFormat\n);\nGO\n\nSELECT TOP 100 * from  dbo.location\n",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "DataExplorationDB",
-						"poolName": "Built-in"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/CETAS')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
 					"query": "USE DataExplorationDB;\nGO\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\n\nCREATE DATABASE SCOPED CREDENTIAL [WorkspaceIdentity] WITH IDENTITY = 'Managed Identity';\nGO\n\nCREATE EXTERNAL FILE FORMAT parquet_file_format\nWITH\n(  \n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n);\nGO\n\n\nCREATE EXTERNAL TABLE [dbo].taxideltatable WITH (\n        LOCATION = '/data/curatedparquet1/',\n        DATA_SOURCE = ContosoLake,\n        FILE_FORMAT = parquet_file_format\n) AS\nSELECT * FROM dbo.GreenTaxiCleansed;\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DataExplorationDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CreateView')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP VIEW IF EXISTS GreenTaxiCleansed;\nGO\nCREATE VIEW GreenTaxiCleansed AS\nSELECT \nTOP 10000\nCASE WHEN t.VendorID = 2 THEN 'VeriFone Inc.' ELSE 'Creative Mobile Technologies' END as VendorName,\nYEAR(t.lpep_pickup_datetime) yr,\nMONTH(t.lpep_pickup_datetime) mo,\nDAY(t.lpep_pickup_datetime) pdy,\nDATEPART(HOUR,t.lpep_pickup_datetime) phr,\nDAY(t.lpep_dropoff_datetime) ddy,\nDATEPART(HOUR,t.lpep_dropoff_datetime) dhr,\nCASE \nWHEN t.RatecodeID = 1 THEN 'Standard rate' \nWHEN t.RatecodeID = 2 THEN 'JFK' \nWHEN t.RatecodeID = 3 THEN 'Newark' \nWHEN t.RatecodeID = 4 THEN 'Nassau or WestChester' \nWHEN t.RatecodeID = 5 THEN 'Negotiatied Fare' \nELSE 'Group Ride' END as RateCode,\nCASE \nWHEN t.payment_type = 1 THEN 'Credit Card' \nWHEN t.payment_type = 2 THEN 'Cash' \nWHEN t.payment_type = 3 THEN 'No charge' \nWHEN t.payment_type = 4 THEN 'Dispute' \nWHEN t.payment_type = 5 THEN 'Unkown' \nELSE 'Voided Trip' END as PaymentType,\nCASE WHEN t.trip_type=1 THEN 'Street-hail' ELSE 'Dispatch' END as TripType ,\nl.Borough as pickupborough, \nl.Zone as pickupzone, \nl.service_zone as pickupservicezone, \nl1.Borough as dropoffborough, \nl1.Zone dropoffzone, \nl1.service_zone dropoffservicezone,\nt.passenger_count,\nt.trip_distance ,\nt.fare_amount\t,\nt.extra ,\nt.mta_tax\t,\nt.tip_amount ,\nt.total_amount\nFROM\n    dbo.taxidata t\n    LEFT JOIN\n    dbo.location l\n    on t.PULocationID = l.LocationID\n    LEFT JOIN\n    dbo.location l1\n    on t.DOLocationID = l1.LocationID;",
 					"metadata": {
 						"language": "sql"
 					},
@@ -214,6 +183,46 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/QueryingParquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT COUNT(*)\nFROM \nOPENROWSET(\nBULK 'https://azureopendatastorage.blob.core.windows.net/nyctlc/green/puYear=*/puMonth=*/*.parquet',\nFORMAT='PARQUET'\n) t\n\nCREATE DATABASE DataExplorationDB \n                COLLATE Latin1_General_100_BIN2_UTF8;\n\n\nUSE DataExplorationDB;\n\nCREATE EXTERNAL DATA SOURCE ContosoLake\nWITH ( LOCATION = 'https://srramsynstorage.dfs.core.windows.net');\n\nCREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\n\n\nCREATE USER data_explorer FOR LOGIN data_explorer;\nGO\nGRANT ADMINISTER DATABASE BULK OPERATIONS TO data_explorer;\nGO\n\nALTER ROLE db_datareader\n\tADD MEMBER data_explorer;  \nGO\n\nCREATE EXTERNAL FILE FORMAT ParquetFormat\n    WITH (\n        FORMAT_TYPE = PARQUET\n    );\nGO\n\nSELECT\n    TOP 100 *,result.filepath(1)\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT='PARQUET'\n    ) AS [result];\n\nDROP EXTERNAL TABLE dbo.taxidata;\nCREATE EXTERNAL TABLE dbo.taxidata\n(\nVendorID INT,\nlpep_pickup_datetime DATETIME2,\nlpep_dropoff_datetime DATETIME2,\nstore_and_fwd_flag\tVARCHAR(2),\nRatecodeID\tfloat,\nPULocationID INT,\nDOLocationID INT,\npassenger_count\tfloat,\ntrip_distance float,\nfare_amount\tfloat,\nextra float,\nmta_tax\tfloat,\ntip_amount float,\ntolls_amount float,\nehail_fee VARCHAR(10),\nimprovement_surcharge float,\ntotal_amount float,\npayment_type float,\t\ntrip_type float,\ncongestion_surcharge float\n)\nWITH\n(\n    LOCATION='data/parquetfiles/green_tripdata_*.parquet',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=ParquetFormat\n);\nGO\n\nSELECT TOP 100 * FROM dbo.taxidata;\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'data/parquetfiles/green_tripdata_2022-08.parquet',\n        DATA_SOURCE='ContosoLake',\n        FORMAT='PARQUET'\n    ) AS [result];\n\n\n\n-- query the table\n\n\nSELECT TOP 100 *\nFROM OPENROWSET(\n    BULK 'https://srramsynstorage.dfs.core.windows.net/data/parquetfiles/*.*',\n    FORMAT = 'parquet') AS rows\n\n\nDROP EXTERNAL TABLE dbo.taxidata1;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DataExplorationDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ReadMasterData')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\nTOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/data/csvfiles/taxi_zone_lookup.csv',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT='csv',\n            PARSER_VERSION = '2.0'\n    ) AS [location];\n\nDROP EXTERNAL FILE FORMAT CsvFormat;\nCREATE EXTERNAL FILE FORMAT CsvFormat\n    WITH (\n        FORMAT_TYPE = DELIMITEDTEXT,\n        FORMAT_OPTIONS(\n            FIELD_TERMINATOR = ',',\n            STRING_DELIMITER = '\"',\n            FIRST_ROW = 2\n        )\n    );\nGO\n\nDROP EXTERNAL TABLE dbo.location;\nCREATE EXTERNAL TABLE dbo.location\n(\n         LocationID INT,\n         Borough VARCHAR(50),\n         Zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8,\n         service_zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8\n)\nWITH\n(\n    LOCATION='/data/csvfiles/taxi_zone_lookup.csv',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=CsvFormat\n);\nGO\n\nSELECT TOP 100 * from  dbo.location\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DataExplorationDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/CreateSampleDeltaLakeFiles')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -234,7 +243,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "4727b301-de84-4823-9f47-ce44102d9020"
+						"spark.autotune.trackingId": "ea498e5a-ec0b-49ec-92ef-0cf7f1a76a98"
 					}
 				},
 				"metadata": {
@@ -259,8 +268,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 10,
 						"cores": 8,
-						"memory": 56,
-						"automaticScaleJobs": true
+						"memory": 56
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -289,9 +297,25 @@
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 10,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
+				"nodeSize": "Medium",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.3",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [],
+			"location": "eastus2"
 		}
 	]
 }
