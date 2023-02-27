@@ -179,7 +179,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE EXTERNAL FILE FORMAT DeltaLakeFormat\nWITH (  \n    FORMAT_TYPE = DELTA\n);\nGO\n\n\nSELECT         \nMONTH(lpep_pickup_datetime) AS mo ,\npassenger_count,\nCOUNT(*) AS cnt\nFROM OPENROWSET(\n\n            BULK '/data/parquetfiles',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT = 'DELTA'\n    ) nyc\nWHERE MONTH(lpep_pickup_datetime) = 9\nGROUP BY\nMONTH(lpep_pickup_datetime),\npassenger_count",
+					"query": "CREATE EXTERNAL FILE FORMAT DeltaLakeFormat\nWITH (  \n    FORMAT_TYPE = DELTA\n);\nGO\n\n\nSELECT         \nMONTH(lpep_pickup_datetime) AS mo ,\npassenger_count,\nCOUNT(*) AS cnt\nFROM OPENROWSET(\n\n            BULK '/data/parquetfiles',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT = 'DELTA'\n    ) nyc\nWHERE MONTH(lpep_pickup_datetime) IN (8,9,10)\nGROUP BY\nMONTH(lpep_pickup_datetime),\npassenger_count",
 					"metadata": {
 						"language": "sql"
 					},
@@ -234,7 +234,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "082b7e99-0a74-4122-83ac-badeda401315"
+						"spark.autotune.trackingId": "4727b301-de84-4823-9f47-ce44102d9020"
 					}
 				},
 				"metadata": {
