@@ -2,12 +2,12 @@
 	"name": "Paritioning",
 	"properties": {
 		"content": {
-			"query": "",
+			"query": "CREATE VIEW TaxiPartitioningView AS\nSELECT\nresult.*,result.filepath(1) as yearmonth\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE='ContosoLake',\n            FORMAT='PARQUET'\n    ) AS [result];\n\nselect TOP 100 * from TaxiPartitioningView where yearmonth = '2022-11';",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "master",
+				"databaseName": "DataExplorationDB",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
