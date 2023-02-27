@@ -2,12 +2,12 @@
 	"name": "Delta",
 	"properties": {
 		"content": {
-			"query": "CREATE EXTERNAL FILE FORMAT DeltaLakeFormat\nWITH (  \n    FORMAT_TYPE = DELTA\n);\nGO",
+			"query": "CREATE EXTERNAL FILE FORMAT DeltaLakeFormat\nWITH (  \n    FORMAT_TYPE = DELTA\n);\nGO\n\n\nSELECT         \nMONTH(lpep_pickup_datetime) AS mo ,\npassenger_count,\nCOUNT(*) AS cnt\nFROM OPENROWSET(\n\n            BULK '/data/parquetfiles',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT = 'DELTA'\n    ) nyc\nWHERE MONTH(lpep_pickup_datetime) = 9\nGROUP BY\nMONTH(lpep_pickup_datetime),\npassenger_count",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "master",
+				"databaseName": "DataExplorationDB",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
