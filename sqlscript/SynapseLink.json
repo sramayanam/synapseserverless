@@ -1,0 +1,17 @@
+{
+	"name": "SynapseLink",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=synapselink-cosmosdb-sqlsample;Database=covid',\n      OBJECT = 'Ecdc',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    )",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DataExplorationDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
