@@ -2,7 +2,7 @@
 	"name": "createusersadmin",
 	"properties": {
 		"content": {
-			"query": "CREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\nCREATE LOGIN data_user WITH PASSWORD = 'Lz8oq1dn';\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGRANT ALTER ANY CREDENTIAL TO data_user;\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nGRANT REFERENCES ON CREDENTIAL::[storage_credential] TO data_user;\nGO",
+			"query": "CREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\nCREATE LOGIN data_user WITH PASSWORD = 'Lz8oq1dn';\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGRANT ALTER ANY CREDENTIAL TO data_user;\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nGRANT REFERENCES ON CREDENTIAL::[storage_credential] TO data_user;\nGO\n\n\nCREATE CREDENTIAL MyCosmosDbAccountCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xw4e0bEjHVGK3AtgQlBtMUKzX3OZx1Wu7Dwdww96CVuM4k30lAnj5zjXNmqHvw6FpEisYh5zTfM2ACDbU69O9g==';",
 			"metadata": {
 				"language": "sql"
 			},

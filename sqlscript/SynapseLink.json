@@ -2,7 +2,7 @@
 	"name": "SynapseLink",
 	"properties": {
 		"content": {
-			"query": "SELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=synapselink-cosmosdb-sqlsample;Database=covid',\n      OBJECT = 'Ecdc',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    )",
+			"query": "SELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    )",
 			"metadata": {
 				"language": "sql"
 			},
