@@ -1,0 +1,17 @@
+{
+	"name": "LocalDatabaseUserAccess",
+	"properties": {
+		"content": {
+			"query": "--CREATE a database scoped credential and run in the database u created\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\n--Create an external data source that uses the database scoped credential\nCREATE EXTERNAL DATA SOURCE ContosoLake1 WITH ( LOCATION = 'https://srramsynstorage.dfs.core.windows.net',CREDENTIAL = storage_credential);\nGO\n\n--You have to use the Credential created above in the external data source to access the storage or create an external table else the query fails\nSELECT\n    TOP 100 *,result.filepath(1)\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE = 'ContosoLake1',\n            FORMAT='PARQUET'\n    ) AS [result];\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
