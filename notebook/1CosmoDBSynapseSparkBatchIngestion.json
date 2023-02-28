@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d9d84293-065d-46fb-9bc3-ddecb5143c1b"
+				"spark.autotune.trackingId": "1f417595-7de2-4895-a4ea-e0971a011722"
 			}
 		},
 		"metadata": {
@@ -148,11 +148,10 @@
 					"            .format(\"cosmos.oltp\")\\\n",
 					"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
 					"            .option(\"spark.cosmos.container\", \"RetailSales\")\\\n",
-					"            .option(\"spark.cosmos.write.upsertEnabled\", \"true\")\\\n",
 					"            .mode('append')\\\n",
 					"            .save()"
 				],
-				"execution_count": 6
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -171,28 +170,19 @@
 					"            .format(\"cosmos.oltp\")\\\n",
 					"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
 					"            .option(\"spark.cosmos.container\", \"StoreDemoGraphics\")\\\n",
-					"            .option(\"spark.cosmos.write.upsertEnabled\", \"true\")\\\n",
 					"            .mode('append')\\\n",
 					"            .save()\n",
 					"\n",
-					"dfRetailSales.write\\\n",
-					"            .format(\"cosmos.oltp\")\\\n",
-					"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
-					"            .option(\"spark.cosmos.container\", \"RetailSales\")\\\n",
-					"            .option(\"spark.cosmos.write.upsertEnabled\", \"true\")\\\n",
-					"            .mode('append')\\\n",
-					"            .save()\n",
 					"\n",
 					"dfProduct.write\\\n",
 					"            .format(\"cosmos.oltp\")\\\n",
 					"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
 					"            .option(\"spark.cosmos.container\", \"Products\")\\\n",
-					"            .option(\"spark.cosmos.write.upsertEnabled\", \"true\")\\\n",
 					"            .mode('append')\\\n",
 					"            .save()     \n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "markdown",
