@@ -1,0 +1,17 @@
+{
+	"name": "statistics",
+	"properties": {
+		"content": {
+			"query": "CREATE STATISTICS stat_payment_type ON dbo.taxidata(payment_type);\n\nSELECT payment_type,count(*)\nFROM\ndbo.taxidata\ngroup by \npayment_type;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DataExplorationDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
