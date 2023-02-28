@@ -282,7 +282,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\nCREATE LOGIN data_user WITH PASSWORD = 'Lz8oq1dn';\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGRANT ALTER ANY CREDENTIAL TO data_user;\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nGRANT REFERENCES ON CREDENTIAL::[storage_credential] TO data_user;\nGO",
+					"query": "CREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\nCREATE LOGIN data_user WITH PASSWORD = 'Lz8oq1dn';\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGRANT ALTER ANY CREDENTIAL TO data_user;\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nGRANT REFERENCES ON CREDENTIAL::[storage_credential] TO data_user;\nGO\n\n\nCREATE CREDENTIAL MyCosmosDbAccountCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xw4e0bEjHVGK3AtgQlBtMUKzX3OZx1Wu7Dwdww96CVuM4k30lAnj5zjXNmqHvw6FpEisYh5zTfM2ACDbU69O9g==';",
 					"metadata": {
 						"language": "sql"
 					},
@@ -337,7 +337,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "c32a31c4-ab18-4394-a82e-fa997122a304"
+						"spark.autotune.trackingId": "a47221f0-5e44-4404-8568-6602498016d1"
 					}
 				},
 				"metadata": {
@@ -433,7 +433,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e56db8e9-9142-4424-ae31-4d58157cba43"
+						"spark.autotune.trackingId": "ef9005b4-d487-4128-98ae-76301c3b22b3"
 					}
 				},
 				"metadata": {
@@ -622,6 +622,26 @@
 						]
 					}
 				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SynapseLink')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DataExplorationDB",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
 			},
 			"dependsOn": []
 		}
