@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "91ba4c9f-a100-4d48-9118-8d2e26ba70fa"
+				"spark.autotune.trackingId": "d9d84293-065d-46fb-9bc3-ddecb5143c1b"
 			}
 		},
 		"metadata": {
@@ -128,7 +128,31 @@
 					"              )\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"dfRetailSales.write\\\n",
+					"            .format(\"cosmos.oltp\")\\\n",
+					"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
+					"            .option(\"spark.cosmos.container\", \"RetailSales\")\\\n",
+					"            .option(\"spark.cosmos.write.upsertEnabled\", \"true\")\\\n",
+					"            .mode('append')\\\n",
+					"            .save()"
+				],
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
