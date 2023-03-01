@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "select\n    TOP 100\n    JSON_VALUE(doc, '$.date_rep') AS date_reported,\n    JSON_VALUE(doc, '$.countries_and_territories') AS country,\n    CAST(JSON_VALUE(doc, '$.deaths') AS INT) as fatal,\n    JSON_VALUE(doc, '$.cases') as cases,\n    doc\nfrom openrowset(\n        bulk 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/latest/ecdc_cases.jsonl',\n                format='csv', fieldterminator ='0x0b', fieldquote = '0x0b'\n    ) with (doc nvarchar(max)) as rows\norder by JSON_VALUE(doc, '$.geo_id') desc;\n\nselect\ndate_rep,\ncases,\nfatal,\ncountry\nfrom openrowset(\n        bulk 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/latest/ecdc_cases.jsonl',\n        format='csv', \n        fieldterminator ='0x0b', \n        fieldquote = '0x0b'\n\n    ) with (doc nvarchar(max)) as rows\n    cross apply openjson (doc)\n        with (  date_rep datetime2,\n                cases int,\n                fatal int '$.deaths',\n                country varchar(100) '$.countries_and_territories')\nwhere country = 'India'\norder by country, date_rep desc;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
