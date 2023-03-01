@@ -1,0 +1,63 @@
+{
+	"name": "CreateDataLakeTables",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "mysparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "56g",
+			"driverCores": 8,
+			"executorMemory": "56g",
+			"executorCores": 8,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "true",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.autotune.trackingId": "f46e072d-61f9-4390-9e5e-cd0f001ea801"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "sql"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/a5dc76bb-fb9c-460f-bc90-a9dd011b12ca/resourceGroups/rg-analytics/providers/Microsoft.Synapse/workspaces/srramsynws/bigDataPools/mysparkpool",
+				"name": "mysparkpool",
+				"type": "Spark",
+				"endpoint": "https://srramsynws.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 10,
+				"cores": 8,
+				"memory": 56,
+				"automaticScaleJobs": true
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"collapsed": false
+				},
+				"source": [
+					"CREATE DATABASE sreelakedb;"
+				],
+				"execution_count": 2
+			}
+		]
+	}
+}
