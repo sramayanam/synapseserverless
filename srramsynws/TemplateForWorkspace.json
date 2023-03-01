@@ -322,7 +322,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\nCREATE LOGIN data_user WITH PASSWORD = 'Lz8oq1dn';\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGRANT ALTER ANY CREDENTIAL TO data_user;\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nGRANT REFERENCES ON CREDENTIAL::[storage_credential] TO data_user;\nGO\n\n\nCREATE CREDENTIAL MyCosmosDbAccountCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xw4e0bEjHVGK3AtgQlBtMUKzX3OZx1Wu7Dwdww96CVuM4k30lAnj5zjXNmqHvw6FpEisYh5zTfM2ACDbU69O9g==';",
+					"query": "CREATE LOGIN data_explorer WITH PASSWORD = 'Lz8oq1dn';\nCREATE LOGIN data_user WITH PASSWORD = 'Lz8oq1dn';\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGRANT ALTER ANY CREDENTIAL TO data_user;\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nGRANT REFERENCES ON CREDENTIAL::[storage_credential] TO data_user;\nGO\n\n\nCREATE CREDENTIAL MyCosmosDbAccountCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xw4e0bEjHVGK3AtgQlBtMUKzX3OZx1Wu7Dwdww96CVuM4k30lAnj5zjXNmqHvw6FpEisYh5zTfM2ACDbU69O9g==';\n\n\nGRANT CONNECT ANY DATABASE to [login@contoso.com];\nGRANT SELECT ALL USER SECURABLES to [login@contoso.com];",
 					"metadata": {
 						"language": "sql"
 					},
@@ -725,15 +725,15 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "8977ebc7-5c5f-4623-b5ce-9c32a22f0874"
+						"spark.autotune.trackingId": "9c395087-2450-41ec-bb20-3461f67804e5"
 					}
 				},
 				"metadata": {
 					"saveOutput": true,
 					"enableDebugMode": false,
 					"kernelspec": {
-						"name": "synapse_sparksql",
-						"display_name": "sql"
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
 					},
 					"language_info": {
 						"name": "sql"
@@ -762,12 +762,13 @@
 							"collapsed": false
 						},
 						"source": [
-							"CREATE TABLE DataExplorationDB.sharedsparkproducts\n",
+							"USE DATABASE DataExplorationDB;\n",
+							"CREATE TABLE dbo.sharedsparkproducts\n",
 							"    USING Parquet\n",
 							"    LOCATION \"abfss://data@srramsynstorage.dfs.core.windows.net/synapse/workspaces/srramsynws/warehouse/sreelakedb.db/products/\""
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 3
 					}
 				]
 			},
