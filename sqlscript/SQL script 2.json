@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 2",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [VendorName]\n,[yr]\n,[mo]\n,[pdy]\n,[phr]\n,[ddy]\n,[fare_amount]\n,[extra]\n,[mta_tax]\n,[tip_amount]\n,[total_amount]\n,[pickupservicezone]\n,[dropoffborough]\n,[dropoffzone]\n,[dropoffservicezone]\n,[passenger_count]\n,[trip_distance]\n,[dhr]\n,[RateCode]\n,[PaymentType]\n,[TripType]\n,[pickupborough]\n,[pickupzone]\n FROM [dbo].[GreenTaxiCleansed]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DataExplorationDB1",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

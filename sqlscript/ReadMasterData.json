@@ -2,12 +2,12 @@
 	"name": "ReadMasterData",
 	"properties": {
 		"content": {
-			"query": "SELECT\nTOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/data/csvfiles/taxi_zone_lookup.csv',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT='csv',\n            PARSER_VERSION = '2.0'\n    ) AS [location];\n\nDROP EXTERNAL FILE FORMAT CsvFormat;\nCREATE EXTERNAL FILE FORMAT CsvFormat\n    WITH (\n        FORMAT_TYPE = DELIMITEDTEXT,\n        FORMAT_OPTIONS(\n            FIELD_TERMINATOR = ',',\n            STRING_DELIMITER = '\"',\n            FIRST_ROW = 2\n        )\n    );\nGO\n\nDROP EXTERNAL TABLE dbo.location;\nCREATE EXTERNAL TABLE dbo.location\n(\n         LocationID INT,\n         Borough VARCHAR(50),\n         Zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8,\n         service_zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8\n)\nWITH\n(\n    LOCATION='/data/csvfiles/taxi_zone_lookup.csv',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=CsvFormat\n);\nGO\n\nSELECT TOP 100 * from  dbo.location\n",
+			"query": "SELECT\nTOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/data/csvfiles/taxi_zone_lookup.csv',\n            DATA_SOURCE = 'ContosoLake1',\n            FORMAT='csv',\n            PARSER_VERSION = '2.0'\n    ) AS [location];\n\nDROP EXTERNAL FILE FORMAT CsvFormat;\nCREATE EXTERNAL FILE FORMAT CsvFormat\n    WITH (\n        FORMAT_TYPE = DELIMITEDTEXT,\n        FORMAT_OPTIONS(\n            FIELD_TERMINATOR = ',',\n            STRING_DELIMITER = '\"',\n            FIRST_ROW = 2\n        )\n    );\nGO\n\nDROP EXTERNAL TABLE dbo.location;\nCREATE EXTERNAL TABLE dbo.location\n(\n         LocationID INT,\n         Borough VARCHAR(50),\n         Zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8,\n         service_zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8\n)\nWITH\n(\n    LOCATION='/data/csvfiles/taxi_zone_lookup.csv',\n    DATA_SOURCE=ContosoLake1,\n    FILE_FORMAT=CsvFormat\n);\nGO\n\nSELECT TOP 100 * from  dbo.location\n",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "DataExplorationDB",
+				"databaseName": "DataExplorationDB1",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
