@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "true",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "4",
-				"spark.autotune.trackingId": "9a0d546b-a441-4ec7-a682-a5912b32fcf1"
+				"spark.autotune.trackingId": "0f543895-79c4-401d-9e49-fe180ddb8159"
 			}
 		},
 		"metadata": {
@@ -54,11 +54,12 @@
 					"collapsed": false
 				},
 				"source": [
-					"CREATE TABLE DataExplorationDB.sharedsparkproducts\n",
+					"USE DATABASE DataExplorationDB;\n",
+					"CREATE TABLE dbo.sharedsparkproducts\n",
 					"    USING Parquet\n",
 					"    LOCATION \"abfss://data@srramsynstorage.dfs.core.windows.net/synapse/workspaces/srramsynws/warehouse/sreelakedb.db/products/\""
 				],
-				"execution_count": 2
+				"execution_count": 3
 			}
 		]
 	}
