@@ -282,12 +282,12 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE TABLE dbo.sharedsparkproducts\n    USING Parquet\n    LOCATION \"abfss://data@srramsynstorage.dfs.core.windows.net/synapse/workspaces/srramsynws/warehouse/sreelakedb.db/products/\"",
+					"query": "SELECT * FROM dbo.sharedsparkproducts ;",
 					"metadata": {
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "DataExplorationDB",
+						"databaseName": "sreelakedb",
 						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
@@ -725,7 +725,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "9c395087-2450-41ec-bb20-3461f67804e5"
+						"spark.autotune.trackingId": "a4ea4dd3-0072-4e74-a269-e3a391e90f83"
 					}
 				},
 				"metadata": {
@@ -762,13 +762,12 @@
 							"collapsed": false
 						},
 						"source": [
-							"USE DATABASE DataExplorationDB;\n",
-							"CREATE TABLE dbo.sharedsparkproducts\n",
+							"CREATE TABLE sreelakedb.sharedsparkproducts\n",
 							"    USING Parquet\n",
 							"    LOCATION \"abfss://data@srramsynstorage.dfs.core.windows.net/synapse/workspaces/srramsynws/warehouse/sreelakedb.db/products/\""
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 4
 					}
 				]
 			},
