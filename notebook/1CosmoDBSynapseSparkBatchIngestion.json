@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "95cd7f0c-898b-4eb3-addc-9e5132f79a5c"
+				"spark.autotune.trackingId": "97303611-6116-4876-98db-c4cfb7c87354"
 			}
 		},
 		"metadata": {
@@ -187,7 +187,7 @@
 				"source": [
 					"dfRetailSales.write.mode(\"overwrite\").saveAsTable(\"sreelakedb.RetailSales\")"
 				],
-				"execution_count": null
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -203,9 +203,9 @@
 					}
 				},
 				"source": [
-					"dfRetailSales.write.mode(\"overwrite\").saveAsTable(\"sreelakedb.StoreDemoGraphics\")"
+					"dfStoreDemoGraphics.write.mode(\"overwrite\").saveAsTable(\"sreelakedb.StoreDemoGraphics\")"
 				],
-				"execution_count": null
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -221,9 +221,9 @@
 					}
 				},
 				"source": [
-					"dfRetailSales.write.mode(\"overwrite\").saveAsTable(\"sreelakedb.Products\")"
+					"dfProduct.write.mode(\"overwrite\").saveAsTable(\"sreelakedb.Products\")"
 				],
-				"execution_count": null
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",

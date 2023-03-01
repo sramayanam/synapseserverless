@@ -1,0 +1,17 @@
+{
+	"name": "SharedSparkTables",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE dbo.sharedsparkproducts\n    USING Parquet\n    LOCATION \"abfss://data@srramsynstorage.dfs.core.windows.net/synapse/workspaces/srramsynws/warehouse/sreelakedb.db/products/\"",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "DataExplorationDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
