@@ -2,7 +2,7 @@
 	"name": "SynapseLink",
 	"properties": {
 		"content": {
-			"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n\nSELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
+			"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n/* First create a credential */\nIF (NOT EXISTS(SELECT * FROM sys.credentials WHERE name = 'srramcosmosdb'))\n    THROW 50000, 'As a prerequisite, create a credential with Azure Cosmos DB key in SECRET option:\n    CREATE CREDENTIAL [MyCosmosDbAccountCredential]\n    WITH IDENTITY = ''SHARED ACCESS SIGNATURE'', SECRET = ''<Enter your Azure Cosmos DB key here>''', 0\nGO\n\n/*Query Analytical Container*/\nSELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
 			"metadata": {
 				"language": "sql"
 			},
