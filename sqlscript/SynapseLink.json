@@ -2,7 +2,7 @@
 	"name": "SynapseLink",
 	"properties": {
 		"content": {
-			"query": "SELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
+			"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n\nSELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
 			"metadata": {
 				"language": "sql"
 			},
