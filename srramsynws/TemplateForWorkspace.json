@@ -147,7 +147,7 @@
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "DataExplorationDB",
+						"databaseName": "DataExplorationDB1",
 						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
@@ -202,12 +202,12 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE VIEW TaxiPartitioningView AS\nSELECT\nresult.*,result.filepath(1) as yearmonth\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE='ContosoLake',\n            FORMAT='PARQUET'\n    ) AS [result];\n\nselect TOP 100 * from TaxiPartitioningView where yearmonth = '2022-11';",
+					"query": "CREATE VIEW TaxiPartitioningView AS\nSELECT\nresult.*,result.filepath(1) as yearmonth\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE='ContosoLake1',\n            FORMAT='PARQUET'\n    ) AS [result]\nwhere result.filepath(1) = '2022-11';\n\n",
 					"metadata": {
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "DataExplorationDB",
+						"databaseName": "DataExplorationDB1",
 						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
@@ -262,12 +262,52 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT\nTOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/data/csvfiles/taxi_zone_lookup.csv',\n            DATA_SOURCE = 'ContosoLake',\n            FORMAT='csv',\n            PARSER_VERSION = '2.0'\n    ) AS [location];\n\nDROP EXTERNAL FILE FORMAT CsvFormat;\nCREATE EXTERNAL FILE FORMAT CsvFormat\n    WITH (\n        FORMAT_TYPE = DELIMITEDTEXT,\n        FORMAT_OPTIONS(\n            FIELD_TERMINATOR = ',',\n            STRING_DELIMITER = '\"',\n            FIRST_ROW = 2\n        )\n    );\nGO\n\nDROP EXTERNAL TABLE dbo.location;\nCREATE EXTERNAL TABLE dbo.location\n(\n         LocationID INT,\n         Borough VARCHAR(50),\n         Zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8,\n         service_zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8\n)\nWITH\n(\n    LOCATION='/data/csvfiles/taxi_zone_lookup.csv',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=CsvFormat\n);\nGO\n\nSELECT TOP 100 * from  dbo.location\n",
+					"query": "SELECT\nTOP 100 *\nFROM\n    OPENROWSET(\n            BULK '/data/csvfiles/taxi_zone_lookup.csv',\n            DATA_SOURCE = 'ContosoLake1',\n            FORMAT='csv',\n            PARSER_VERSION = '2.0'\n    ) AS [location];\n\nDROP EXTERNAL FILE FORMAT CsvFormat;\nCREATE EXTERNAL FILE FORMAT CsvFormat\n    WITH (\n        FORMAT_TYPE = DELIMITEDTEXT,\n        FORMAT_OPTIONS(\n            FIELD_TERMINATOR = ',',\n            STRING_DELIMITER = '\"',\n            FIRST_ROW = 2\n        )\n    );\nGO\n\nDROP EXTERNAL TABLE dbo.location;\nCREATE EXTERNAL TABLE dbo.location\n(\n         LocationID INT,\n         Borough VARCHAR(50),\n         Zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8,\n         service_zone VARCHAR(50) COLLATE Latin1_General_100_BIN2_UTF8\n)\nWITH\n(\n    LOCATION='/data/csvfiles/taxi_zone_lookup.csv',\n    DATA_SOURCE=ContosoLake1,\n    FILE_FORMAT=CsvFormat\n);\nGO\n\nSELECT TOP 100 * from  dbo.location\n",
 					"metadata": {
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "DataExplorationDB",
+						"databaseName": "DataExplorationDB1",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE DATABASE DataExplorationDB1 \n                COLLATE Latin1_General_100_BIN2_UTF8;\n\n\nUSE DataExplorationDB1;\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Lz8oq1dn';\nGO\nCREATE DATABASE SCOPED CREDENTIAL [storage_credential] WITH IDENTITY='Managed Identity';\nGO\nCREATE EXTERNAL DATA SOURCE ContosoLake1 WITH ( LOCATION = 'https://srramsynstorage.dfs.core.windows.net',CREDENTIAL = storage_credential);\nGO\n\nCREATE EXTERNAL FILE FORMAT ParquetFormat\n    WITH (\n        FORMAT_TYPE = PARQUET\n    );\nGO\n\nSELECT\n    TOP 100 *,result.filepath(1) as YearMonth\nFROM\n    OPENROWSET(\n            BULK '/data/parquetfiles/green_tripdata_*.*',\n            DATA_SOURCE = 'ContosoLake1',\n            FORMAT='PARQUET'\n    ) AS [result]\n;\n\nDROP EXTERNAL TABLE dbo.taxidata;\nCREATE EXTERNAL TABLE dbo.taxidata\n(\nVendorID INT,\nlpep_pickup_datetime DATETIME2,\nlpep_dropoff_datetime DATETIME2,\nstore_and_fwd_flag\tVARCHAR(2),\nRatecodeID\tfloat,\nPULocationID INT,\nDOLocationID INT,\npassenger_count\tfloat,\ntrip_distance float,\nfare_amount\tfloat,\nextra float,\nmta_tax\tfloat,\ntip_amount float,\ntolls_amount float,\nehail_fee VARCHAR(10),\nimprovement_surcharge float,\ntotal_amount float,\npayment_type float,\t\ntrip_type float,\ncongestion_surcharge float\n)\nWITH\n(\n    LOCATION='data/parquetfiles/green_tripdata_*.parquet',\n    DATA_SOURCE=ContosoLake,\n    FILE_FORMAT=ParquetFormat\n);\nGO\n\nSELECT TOP 100 * FROM dbo.taxidata;\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'data/parquetfiles/green_tripdata_2022-08.parquet',\n        DATA_SOURCE='ContosoLake',\n        FORMAT='PARQUET'\n    ) AS [result];\n\n\n\n-- query the table\n\n\nSELECT TOP 100 *\nFROM OPENROWSET(\n    BULK 'https://srramsynstorage.dfs.core.windows.net/data/parquetfiles/*.*',\n    FORMAT = 'parquet') AS rows\n\n\nSELECT COUNT(*)\nFROM \nOPENROWSET(\nBULK 'https://azureopendatastorage.blob.core.windows.net/nyctlc/green/puYear=*/puMonth=*/*.parquet',\nFORMAT='PARQUET'\n) t",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DataExplorationDB1",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [VendorName]\n,[yr]\n,[mo]\n,[pdy]\n,[phr]\n,[ddy]\n,[fare_amount]\n,[extra]\n,[mta_tax]\n,[tip_amount]\n,[total_amount]\n,[pickupservicezone]\n,[dropoffborough]\n,[dropoffzone]\n,[dropoffservicezone]\n,[passenger_count]\n,[trip_distance]\n,[dhr]\n,[RateCode]\n,[PaymentType]\n,[TripType]\n,[pickupborough]\n,[pickupzone]\n FROM [dbo].[GreenTaxiCleansed]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "DataExplorationDB1",
 						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
@@ -357,7 +397,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/1CosmoDBSynapseSparkBatchIngestion')]",
+			"name": "[concat(parameters('workspaceName'), '/SynapseSparkBatchIngestion')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -377,7 +417,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "97303611-6116-4876-98db-c4cfb7c87354"
+						"spark.autotune.trackingId": "4aeac849-bcb7-48e3-825e-1e609dc2edd9"
 					}
 				},
 				"metadata": {
@@ -402,74 +442,22 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 10,
 						"cores": 8,
-						"memory": 56
+						"memory": 56,
+						"automaticScaleJobs": true
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "markdown",
+						"metadata": {},
 						"source": [
-							"# Batch Data Ingestion for Near real-time sales forecasting leveraging Synapse Link for Azure Cosmos DB\n",
-							"\n",
-							"## Key Information about this notebook\n",
-							"\n",
-							"* This notebook is part of the Azure Synapse Link for Azure Cosmos DB analitycal sample notebooks. For more information, click [here](../../../README.md). \n",
-							"\n",
-							"* It was build for Azure Cosmos DB SQL API but you can, by yourself, customize it for Azure Cosmos DB API for MongoDB. Please read about the analytical store inference schema differences between these 2 APIs [here](https://docs.microsoft.com/azure/cosmos-db/analytical-store-introduction#analytical-schema). \n",
-							"\n",
-							"* This is a Synapse Notebook and it was created to run in Synapse Analytics workspaces. Please make sure that you followed the pre-reqs of the [README](/README.md) file. After that, please execute the steps below in the same order that they are presented here. \n",
-							"\n",
-							"* From now on, all operations are case sentitive. Please be careful with everything you need to type.\n",
-							"\n",
-							"## Predictive Analytics\n",
-							"\n",
-							"Predictive analytics can help us to study and discover the factors that determine the number of sales that a retail store will have in the future. This notebook scenario is [Microsoft Surface](https://www.microsoft.com/en-us/surface) sales forecasting, with artificially created data. The business challenge is a **distributor that wants to predict how many units are necessary in the local warehouse to supply the stores in the area.**\n",
-							"\n",
-							"We will use Quantitative Models to forecast future data as a function of past data. They are appropriate to use when past numerical data is available and when it is reasonable to assume that some of the patterns in the data are expected to continue into the future. These methods are usually applied to short or intermediate range decisions. For more information, click [here](https://en.wikipedia.org/wiki/Forecasting).\n",
-							"\n",
-							"\n",
-							"<img src=\"https://cosmosnotebooksdata.blob.core.windows.net/notebookdata/store.PNG\" alt=\"Surface Device\" width=\"75%\"/>\n",
-							"\n",
-							"## Environment Creation\n",
-							"\n",
-							"### 1. Using the **Data / Linked** tab of your Synapse workspace, one of the pre-requisites mentioned in the README file, create a **RetailData** folder within the root directory of your storage account. Upload to this folder the csv files that are placed within the folder with the same name of this repo. As you can see in the image below, your new folder in the storage account, a data lake, will be in the second level of the file system structure. \n",
-							"\n",
-							"**Did you know?**  The Synapse workspace is attached to an [ADLS Gen2 storage account](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) and the files placed on the default storage account can be accessed using the relative path as below.\n",
-							"\n",
-							"<img src=\"https://cosmosnotebooksdata.blob.core.windows.net/notebookdata/upload.PNG\" alt=\"Upload\" width=\"75%\"/>\n",
-							"\n",
-							"### 2. Using the Azure Portal, go to the **Access Control (IAM)** tab, click on the **+Add** and **Add a role assignment** links and add yourself to the **Contributor** role. This will allow you to create databases and tables within from your Azure Synapse Spark Pool.\n",
-							"\n",
-							"### 3. Using the Azure Portal, go to [Data Explorer](https://docs.microsoft.com/en-us/azure/cosmos-db/data-explorer) of your the Azure Cosmos DB Account and create a database called **RetailSalesDemoDB**. Change the Throughput to Autoscale and set the limit to 40,000 instead of 400, this will speed-up the loading process of the data, scaling down the database when it is not in use. For more information, click [here](https://docs.microsoft.com/en-us/azure/cosmos-db/provision-throughput-autoscale).\n",
-							"\n",
-							"### 4. In the same Data Explorer, create 3 **Analytical Store** enabled containers: **StoreDemoGraphics**, **RetailSales**, and **Products**. In the portal interface, the container-id is the container name. Important details:\n",
-							"+ Use **/id** as the Partition key for all 3 containers.\n",
-							"+ Please make sure that **Analytical store** is set to **On** for all 3 containers. \n",
-							"\n",
-							"\n",
-							"<img src=\"https://cosmosnotebooksdata.blob.core.windows.net/notebookdata/new-cont.PNG\" alt=\"New Containers\" width=\"75%\"/>\n",
-							"\n",
-							"\n",
-							"### 5. In your Azure Synapse workspace, go to the **Manage / Linked Services** tab and create a service called **RetailSalesDemoDB** pointing to the database in Cosmos DB created in item 3 above.\n",
-							"\n",
-							"<img src=\"https://cosmosnotebooksdata.blob.core.windows.net/notebookdata/ls.PNG\" alt=\"Surface Device\" width=\"100%\"/>"
-						]
-					},
-					{
-						"cell_type": "markdown",
-						"source": [
-							"## "
-						]
-					},
-					{
-						"cell_type": "markdown",
-						"source": [
-							"### 6. Now let's load the data into Spark DataFrames."
+							"### Let's load the data into Spark DataFrames from the Storage Location."
 						]
 					},
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"dfStoreDemoGraphics = (spark\n",
 							"                .read\n",
@@ -484,19 +472,14 @@
 							"dfProduct = (spark\n",
 							"                .read\n",
 							"                .csv(\"/RetailData/Products.csv\", header=True, inferSchema='true')\n",
-							"              )\n",
-							""
+							"              )"
 						],
 						"outputs": [],
 						"execution_count": 9
 					},
 					{
-						"cell_type": "code",
+						"cell_type": "markdown",
 						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
 							"nteract": {
 								"transient": {
 									"deleting": false
@@ -504,15 +487,8 @@
 							}
 						},
 						"source": [
-							"dfRetailSales.write\\\n",
-							"            .format(\"cosmos.oltp\")\\\n",
-							"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
-							"            .option(\"spark.cosmos.container\", \"RetailSales\")\\\n",
-							"            .mode('append')\\\n",
-							"            .save()"
-						],
-						"outputs": [],
-						"execution_count": 7
+							"### Let's Create a spark database"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -532,6 +508,19 @@
 						],
 						"outputs": [],
 						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"### Load the data from Spark data Frame to Lake Database Tables"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -592,17 +581,27 @@
 					},
 					{
 						"cell_type": "markdown",
+						"metadata": {},
 						"source": [
-							"### 7. Write the dataframe to the Azure Cosmos DB Collections\n",
+							"### First create a Cosmos DB with RetailSalesDemoDB and create three collections called 1. Retail Sales 2. StoreDemographics 3. Products\n",
+							"### Write the Spark Dataframe to the Azure Cosmos DB Collections\n",
 							"\n",
-							">**Did you know?** The \"cosmos.oltp\" is the Spark format that enables connection to the Cosmos DB Transactional store.\n",
+							"#### The \"cosmos.oltp\" is the Spark format that enables connection to the Cosmos DB Transactional store.\n",
 							"\n",
-							">**Did you know?** The ingestion to the Azure Cosmos DB collection is always performed through the Transactional store irrespective of whether the Analytical Store is enabled or not."
+							"#### Also enable Synapse link on these three containers to read data from the analytical containers. The linked service shows three analytic containers ready to be queried as part of the lab"
 						]
 					},
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
+							"dfRetailSales.write\\\n",
+							"            .format(\"cosmos.oltp\")\\\n",
+							"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
+							"            .option(\"spark.cosmos.container\", \"RetailSales\")\\\n",
+							"            .mode('append')\\\n",
+							"            .save()\n",
+							"\n",
 							"dfStoreDemoGraphics.write\\\n",
 							"            .format(\"cosmos.oltp\")\\\n",
 							"            .option(\"spark.synapse.linkedService\", \"RetailSalesDemoDB\")\\\n",
@@ -621,14 +620,6 @@
 						],
 						"outputs": [],
 						"execution_count": 8
-					},
-					{
-						"cell_type": "markdown",
-						"source": [
-							"### 8. Using the Azure Cosmos DB Account portal, go to the Data Explorer and check if the data was loaded.\n",
-							"\n",
-							"## All Done! Now let's go to the [Forecast Notebook](2SalesForecastingWithAML.ipynb)."
-						]
 					}
 				]
 			},
@@ -655,7 +646,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "e35ec587-db01-4ffc-9d4c-81b811ffa298"
+						"spark.autotune.trackingId": "c14a6a23-0312-499e-9ee7-c68a45114a15"
 					}
 				},
 				"metadata": {
@@ -726,7 +717,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "5481c796-64c9-4a4f-b2a2-6a80893d90d9"
+						"spark.autotune.trackingId": "77c6f22d-9031-410b-9bf7-ce90a5ff9fc1"
 					}
 				},
 				"metadata": {
@@ -751,7 +742,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 10,
 						"cores": 8,
-						"memory": 56
+						"memory": 56,
+						"automaticScaleJobs": true
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -797,26 +789,6 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "select\n    TOP 100\n    JSON_VALUE(doc, '$.date_rep') AS date_reported,\n    JSON_VALUE(doc, '$.countries_and_territories') AS country,\n    CAST(JSON_VALUE(doc, '$.deaths') AS INT) as fatal,\n    JSON_VALUE(doc, '$.cases') as cases,\n    doc\nfrom openrowset(\n        bulk 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/latest/ecdc_cases.jsonl',\n                format='csv', fieldterminator ='0x0b', fieldquote = '0x0b'\n    ) with (doc nvarchar(max)) as rows\norder by JSON_VALUE(doc, '$.geo_id') desc;\n\nselect\ndate_rep,\ncases,\nfatal,\ncountry\nfrom openrowset(\n        bulk 'https://pandemicdatalake.blob.core.windows.net/public/curated/covid-19/ecdc_cases/latest/ecdc_cases.jsonl',\n        format='csv', \n        fieldterminator ='0x0b', \n        fieldquote = '0x0b'\n\n    ) with (doc nvarchar(max)) as rows\n    cross apply openjson (doc)\n        with (  date_rep datetime2,\n                cases int,\n                fatal int '$.deaths',\n                country varchar(100) '$.countries_and_territories')\nwhere country = 'India'\norder by country, date_rep desc;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "master",
-						"poolName": "Built-in"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
 		}
 	]
 }
