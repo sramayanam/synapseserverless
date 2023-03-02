@@ -2,7 +2,7 @@
 	"name": "SharedSparkTables",
 	"properties": {
 		"content": {
-			"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n\n\nSELECT * FROM dbo.sharedsparkproducts ;",
+			"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n/* Run with ondemand pool */\n\nSELECT TOP 100 * FROM sreelakedb.dbo.retailsales ;\nSELECT TOP 100 * FROM sreelakedb.dbo.products ;\nSELECT TOP 100 * FROM sreelakedb.dbo.storedemographics ;",
 			"metadata": {
 				"language": "sql"
 			},
