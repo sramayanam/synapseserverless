@@ -342,7 +342,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
+					"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n\nSELECT TOP 10 *\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=srramcosmosdb;Database=RetailSalesDemoDB',\n      OBJECT = 'RetailSales',\n      SERVER_CREDENTIAL = 'MyCosmosDbAccountCredential'\n    ) as rows",
 					"metadata": {
 						"language": "sql"
 					},
@@ -417,7 +417,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "4aeac849-bcb7-48e3-825e-1e609dc2edd9"
+						"spark.autotune.trackingId": "e4be08ab-b8dd-4af7-b4da-24ed383c150d"
 					}
 				},
 				"metadata": {
@@ -646,7 +646,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "c14a6a23-0312-499e-9ee7-c68a45114a15"
+						"spark.autotune.trackingId": "997f1653-6f3d-4bf4-b41d-53bb95bcc336"
 					}
 				},
 				"metadata": {
@@ -717,7 +717,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "77c6f22d-9031-410b-9bf7-ce90a5ff9fc1"
+						"spark.autotune.trackingId": "9f678fd8-59f6-4c8d-a66e-0535932aa651"
 					}
 				},
 				"metadata": {
