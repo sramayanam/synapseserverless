@@ -322,7 +322,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT * FROM dbo.sharedsparkproducts ;",
+					"query": "/* Run the SynapseSparkBatchIngestion notebook before executing the following queries */\n\n\nSELECT * FROM dbo.sharedsparkproducts ;",
 					"metadata": {
 						"language": "sql"
 					},
@@ -417,7 +417,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e4be08ab-b8dd-4af7-b4da-24ed383c150d"
+						"spark.autotune.trackingId": "8a221962-06ab-4f03-a927-a95a385a5301"
 					}
 				},
 				"metadata": {
@@ -646,7 +646,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "997f1653-6f3d-4bf4-b41d-53bb95bcc336"
+						"spark.autotune.trackingId": "691dee63-d6ca-45f9-9848-e31c375d2658"
 					}
 				},
 				"metadata": {
@@ -717,7 +717,7 @@
 						"spark.dynamicAllocation.enabled": "true",
 						"spark.dynamicAllocation.minExecutors": "1",
 						"spark.dynamicAllocation.maxExecutors": "4",
-						"spark.autotune.trackingId": "9f678fd8-59f6-4c8d-a66e-0535932aa651"
+						"spark.autotune.trackingId": "87c9f7bb-7974-4de3-b094-310603e279ee"
 					}
 				},
 				"metadata": {
